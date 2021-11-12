@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true,
+    "rootDir": "./src",
+    "outDir": "./build",
     "module": "commonjs",
     "target": "es5",
-    "sourceMap": true
+    "sourceMap": false,
+    "esModuleInterop": true
   },
   "exclude": [
     "node_modules"
