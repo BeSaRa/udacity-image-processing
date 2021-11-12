@@ -2,23 +2,24 @@
   "name": "udacity-image-processing",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
+  "main": "build/app.js",
   "scripts": {
     "start": "node build/app.js",
     "build": "npx tsc",
     "dev": "nodemon src/app.ts",
-    "lint": "eslint src/**.ts"
+    "lint": "eslint src/**.ts",
+    "jasmine": "jasmine",
+    "test": "npm run build && npm run jasmine"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/express": "^4.17.13",
+    "@types/jasmine": "^3.10.2",
     "@types/sharp": "^0.29.3",
     "@typescript-eslint/eslint-plugin": "^5.3.1",
     "eslint": "^8.2.0",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "nodemon": "^2.0.15",
     "prettier": "^2.4.1",
@@ -27,6 +28,8 @@
   },
   "dependencies": {
     "express": "^4.17.1",
+    "jasmine": "^3.10.0",
+    "jasmine-spec-reporter": "^7.0.0",
     "sharp": "^0.29.2"
   }
 }
