@@ -2,8 +2,8 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./build",
-    "module": "commonjs",
     "target": "es5",
+    "module": "commonjs",
     "sourceMap": false,
     "esModuleInterop": true
   },
