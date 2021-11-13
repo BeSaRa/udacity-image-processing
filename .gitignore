@@ -118,3 +118,4 @@ dist
 
 .idea
 build
+/public/assets/thumb/

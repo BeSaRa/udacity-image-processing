@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
     "outDir": "./build",
     "target": "es5",
     "module": "commonjs",
