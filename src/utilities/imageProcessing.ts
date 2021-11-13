@@ -102,6 +102,8 @@ export class ImageProcessing {
     width: number,
     height: number
   ): Promise<string> {
+    width = isNaN(width) ? 200 : width;
+    height = isNaN(height) ? 200 : height;
     if (await ImageProcessing.existsInThumb(imageName, width, height)) {
       return ImageProcessing.imageThumbPath(imageName, width, height);
     } else if (await ImageProcessing.existsInFull(imageName)) {
