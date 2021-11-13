@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import routes from './routes';
 
 const app = express();
-const port = 5000;
+const port = 3000;
 // serve the static files
 app.use(express.static('public'));
 // the main route for our api
