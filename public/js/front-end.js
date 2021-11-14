@@ -3,11 +3,25 @@
   const uploader = document.getElementById('uploader');
   const uploaderImages = document.getElementById('uploader-images');
   const uploadBtn = document.getElementById('upload-button');
-  const API_URL = 'http://localhost:3000/api/images/upload';
+  const thumbnailsFolderImages = document.getElementById(
+    'thumbnails-folder-images'
+  );
+  const UPLOAD_API_URL = 'http://localhost:3000/api/images/upload';
+  const THUMBNAILS_API_URL = 'http://localhost:3000/api/images/thumbnails';
 
   let filesInUploader = [];
   let uploaderThumbnails = [];
   const allowedExtentions = ['png', 'jpg', 'gif'];
+
+  /**
+   * @description load list of images from thumbnail folder
+   * @returns {Promise<String[]>}
+   */
+  const loadThumbnailImages = () => {
+    return fetch(THUMBNAILS_API_URL)
+      .then(fetchErrorHandler)
+      .then((res) => res.json());
+  };
   /**
    * @description checkl if the file in the allawed extensions
    * @param file
@@ -23,7 +37,7 @@
   const onRemoveButtonClicked = (event) => {
     uploaderThumbnails.splice(parseInt(event.target.dataset.index), 1);
     filesInUploader.splice(parseInt(event.target.dataset.index), 1);
-    renderUploaderImages();
+    renderUploaderImages(uploaderImages, uploaderThumbnails);
   };
   /**
    * @description cretae remove button
@@ -53,22 +67,23 @@
    * @description create uploader image wrapper
    * @param url
    * @param index
+   * @param ignoreRemoveBtn
    * @returns {HTMLDivElement}
    */
-  const createImageItem = (url, index) => {
+  const createImageItem = (url, index, ignoreRemoveBtn = false) => {
     const maindiv = document.createElement('div');
     maindiv.classList.add('uploader-image');
-    maindiv.appendChild(createRemoveBtn(index));
+    !ignoreRemoveBtn && maindiv.appendChild(createRemoveBtn(index));
     maindiv.appendChild(createImage(url));
     return maindiv;
   };
   /**
    * @description render the images that came from uploader field
    */
-  const renderUploaderImages = () => {
-    uploaderImages.innerHTML = '';
-    uploaderThumbnails.forEach((url, index) => {
-      uploaderImages.appendChild(createImageItem(url, index));
+  const renderUploaderImages = (container, urls, ignoreRemoveBtn = false) => {
+    container.innerHTML = '';
+    urls.forEach((url, index) => {
+      container.appendChild(createImageItem(url, index, ignoreRemoveBtn));
     });
     disableUploadBtn();
   };
@@ -80,13 +95,23 @@
   };
   /**
    * @description to throw error to make the catch work if there is error came from backend
-   * @param response
-   * @returns {{ok}|*}
+   * @param response {Response}
+   * @returns {Response}
    */
   const fetchErrorHandler = async (response) => {
     if (!response.ok) throw Error(await response.text());
     return response;
   };
+  /**
+   * @description to load the  images insid the thumb folder
+   */
+  const loadThumbnailList = () => {
+    loadThumbnailImages()
+      .then((images) => images.map((image) => 'assets/thumb/' + image))
+      .then((urls) => renderUploaderImages(thumbnailsFolderImages, urls, true));
+  };
+  // load thumbnails list and display it
+  loadThumbnailList();
   // listen to change event and preapre the file to be displayed
   uploader.addEventListener('change', (event) => {
     const { files } = event.target;
@@ -97,7 +122,7 @@
       }
     });
     uploader.value = '';
-    renderUploaderImages();
+    renderUploaderImages(uploaderImages, uploaderThumbnails);
   });
   // listen to click on the upload button to call the backend API
   uploadBtn.addEventListener('click', () => {
@@ -106,7 +131,7 @@
       disableUploadBtn();
     }
 
-    fetch(API_URL, {
+    fetch(UPLOAD_API_URL, {
       method: 'POST',
       body: filesInUploader.reduce((formData, file) => {
         formData.append('files', file);
@@ -114,9 +139,6 @@
       }, new FormData()),
     })
       .then(fetchErrorHandler)
-      .then((result) => {
-        console.log(result);
-      })
       .catch((error) => {
         alert(error);
       });

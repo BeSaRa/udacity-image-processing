@@ -3,6 +3,7 @@ import { ImageProcessing } from '../../utilities/imageProcessing';
 import { IImageInformation } from '../../interfaces/i-image-information';
 import { UploadedFile } from 'express-fileupload';
 import path from 'path';
+import { promises as fs } from 'fs';
 
 const imageRoute = Router();
 imageRoute.get('/', async (req: Request, res: Response): Promise<void> => {
@@ -31,5 +32,13 @@ imageRoute.post('/upload', (req: Request, res: Response) => {
   Promise.all(uplodedPromise).then(() => {
     res.sendStatus(200);
   });
+});
+
+imageRoute.get('/thumbnails', async (req: Request, res: Response) => {
+  try {
+    res.send(await fs.readdir(path.resolve(...ImageProcessing.THUMBNAIL_PATH)));
+  } catch (e) {
+    res.status(500).send('cannot scan the thumbnail folder');
+  }
 });
 export default imageRoute;
