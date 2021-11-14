@@ -7,17 +7,21 @@ import { promises as fs } from 'fs';
 
 const imageRoute = Router();
 imageRoute.get('/', async (req: Request, res: Response): Promise<void> => {
-  const {
-    filename,
-    width = '200',
-    height = '200',
-  }: Partial<IImageInformation> = req.query;
+  const { filename, width, height }: Partial<IImageInformation> = req.query;
   const image = await ImageProcessing.createThumbIfNotExists(
     filename,
-    parseInt(width),
-    parseInt(height)
+    parseInt(width ? width : '0'),
+    parseInt(height ? height : '0')
   );
   image.length ? res.sendFile(image) : res.send('Image not exists');
+});
+
+imageRoute.get('/full', async (req: Request, res: Response) => {
+  try {
+    res.send(await fs.readdir(path.resolve(...ImageProcessing.FULL_PATH)));
+  } catch (e) {
+    res.status(500).send('cannot scan the thumbnail folder');
+  }
 });
 
 imageRoute.post('/upload', (req: Request, res: Response) => {
@@ -26,10 +30,13 @@ imageRoute.post('/upload', (req: Request, res: Response) => {
     return;
   }
   const { files = [] }: { files?: UploadedFile[] } = req.files;
-  const uplodedPromise = files.map((file) =>
-    file.mv(path.resolve(...ImageProcessing.FULL_PATH, file.name))
-  );
-  Promise.all(uplodedPromise).then(() => {
+
+  const uploadedPromise = []
+    .concat(files)
+    .map((file) =>
+      file.mv(path.resolve(...ImageProcessing.FULL_PATH, file.name))
+    );
+  Promise.all(uploadedPromise).then(() => {
     res.sendStatus(200);
   });
 });

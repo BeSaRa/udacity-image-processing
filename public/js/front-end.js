@@ -1,34 +1,101 @@
 'use strict';
 (() => {
+  const UPLOAD_API_URL = 'http://localhost:3000/api/images/upload';
+  const THUMBNAILS_API_URL = 'http://localhost:3000/api/images/thumbnails';
+  const FULL_API_URL = 'http://localhost:3000/api/images/full';
+  const RESIZE_API_URL = 'http://localhost:3000/api/images';
+
   const uploader = document.getElementById('uploader');
   const uploaderImages = document.getElementById('uploader-images');
   const uploadBtn = document.getElementById('upload-button');
   const thumbnailsFolderImages = document.getElementById(
     'thumbnails-folder-images'
   );
-  const UPLOAD_API_URL = 'http://localhost:3000/api/images/upload';
-  const THUMBNAILS_API_URL = 'http://localhost:3000/api/images/thumbnails';
+  /**
+   * @type {HTMLButtonElement}
+   */
+  const resizeButton = document.getElementById('resize-button');
+  /**
+   * @type {HTMLSelectElement}
+   */
+  const selectInput = document.getElementById('s-image');
+  /**
+   * @type {HTMLImageElement}
+   */
+  const selectedImage = document.getElementById('selected-image');
+  /**
+   * @type {HTMLInputElement}
+   */
+  const imageWidthInput = document.getElementById('image-width');
+  /**
+   * @type {HTMLInputElement}
+   */
+  const imageHeightInput = document.getElementById('image-height');
+  /**
+   * @type {HTMLInputElement}
+   */
+  const newImageWidthInput = document.getElementById('new-image-width');
+  /**
+   * @type {HTMLInputElement}
+   */
+  const newImageHeightInput = document.getElementById('new-image-height');
 
   let filesInUploader = [];
   let uploaderThumbnails = [];
-  const allowedExtentions = ['png', 'jpg', 'gif'];
-
+  const allowedExtensions = ['png', 'jpg', 'gif'];
   /**
-   * @description load list of images from thumbnail folder
-   * @returns {Promise<String[]>}
+   * @description load list of images from full folder
    */
-  const loadThumbnailImages = () => {
-    return fetch(THUMBNAILS_API_URL)
+  const loadFullImages = () => {
+    fetch(FULL_API_URL)
       .then(fetchErrorHandler)
-      .then((res) => res.json());
+      .then((res) => res.json())
+      .then((images) => createOptionList(images));
   };
   /**
-   * @description checkl if the file in the allawed extensions
+   * @description create an option element
+   * @param option
+   * @param index{number}
+   * @returns {HTMLOptionElement}
+   */
+  const createOption = (option, index) => {
+    let ele = document.createElement('option');
+    ele.value = 'api/images/?filename=' + option;
+    ele.innerText = option;
+    // to select always first item
+    if (index === 0) {
+      ele.selected = true;
+    }
+    return ele;
+  };
+  /**
+   * @description display options list to make the user select an image to process
+   * @param options{string[]}
+   */
+  const createOptionList = (options) => {
+    selectInput.innerHTML = '';
+    options.forEach((option, index) =>
+      selectInput.appendChild(createOption(option, index))
+    );
+    selectInput.dispatchEvent(new Event('change'));
+  };
+  /**
+   * @description load list of images from thumbnail folder
+   */
+  const loadThumbnailImages = () => {
+    fetch(THUMBNAILS_API_URL)
+      .then(fetchErrorHandler)
+      .then((res) => res.json())
+      .then((images) => images.map((image) => 'assets/thumb/' + image))
+      .then((urls) => renderUploaderImages(thumbnailsFolderImages, urls, true));
+  };
+  /**
+   * @description check if the file in the allowed extensions
    * @param file
    * @returns {boolean}
    */
-  const isValidExtention = (file) => {
-    return allowedExtentions.includes(file.name.split('.').pop().toLowerCase());
+  const isValidExtension = (file) => {
+    return allowedExtensions.includes(file.name.split('.').pop().toLowerCase());
   };
   /**
    * @description handle remove button callback
@@ -40,7 +107,7 @@
     renderUploaderImages(uploaderImages, uploaderThumbnails);
   };
   /**
-   * @description cretae remove button
+   * @description create remove button
    * @param index
    * @returns {HTMLButtonElement}
    */
@@ -71,11 +138,11 @@
    * @returns {HTMLDivElement}
    */
   const createImageItem = (url, index, ignoreRemoveBtn = false) => {
-    const maindiv = document.createElement('div');
-    maindiv.classList.add('uploader-image');
-    !ignoreRemoveBtn && maindiv.appendChild(createRemoveBtn(index));
-    maindiv.appendChild(createImage(url));
-    return maindiv;
+    const mainDiv = document.createElement('div');
+    mainDiv.classList.add('uploader-image');
+    !ignoreRemoveBtn && mainDiv.appendChild(createRemoveBtn(index));
+    mainDiv.appendChild(createImage(url));
+    return mainDiv;
   };
   /**
    * @description render the images that came from uploader field
@@ -88,7 +155,7 @@
     disableUploadBtn();
   };
   /**
-   * @description disable upload button if there is no files choosed to upload
+   * @description disable upload button if there is no files chosen to upload
    */
   const disableUploadBtn = () => {
     uploadBtn.disabled = !filesInUploader.length;
@@ -102,21 +169,15 @@
     if (!response.ok) throw Error(await response.text());
     return response;
   };
-  /**
-   * @description to load the  images insid the thumb folder
-   */
-  const loadThumbnailList = () => {
-    loadThumbnailImages()
-      .then((images) => images.map((image) => 'assets/thumb/' + image))
-      .then((urls) => renderUploaderImages(thumbnailsFolderImages, urls, true));
-  };
   // load thumbnails list and display it
-  loadThumbnailList();
-  // listen to change event and preapre the file to be displayed
+  loadThumbnailImages();
+  // load full images list and display it
+  loadFullImages();
+  // listen to change event and prepare the file to be displayed
   uploader.addEventListener('change', (event) => {
     const { files } = event.target;
     Array.from(files, (file) => {
-      if (isValidExtention(file)) {
+      if (isValidExtension(file)) {
         filesInUploader.push(file);
         uploaderThumbnails.push(URL.createObjectURL(file));
       }
@@ -127,7 +188,7 @@
   // listen to click on the upload button to call the backend API
   uploadBtn.addEventListener('click', () => {
     if (!filesInUploader.length) {
-      alert('Please choose images beofer click upload');
+      alert('Please choose images before click upload');
       disableUploadBtn();
     }
 
@@ -141,6 +202,52 @@
       .then(fetchErrorHandler)
       .catch((error) => {
         alert(error);
+      });
+  });
+  // listen to change on the selected image dropdown list
+  selectInput.addEventListener('change', () => {
+    selectedImage.alt = selectedImage.src = selectInput.value;
+  });
+  // listen to load event for the image to get size (width / height)
+  selectedImage.addEventListener('load', () => {
+    imageWidthInput.value = '' + selectedImage.naturalWidth;
+    imageHeightInput.value = '' + selectedImage.naturalHeight;
+    newImageWidthInput.value = '' + selectedImage.naturalWidth;
+    newImageHeightInput.value = '' + selectedImage.naturalHeight;
+  });
+  // listen to keydown for the width to prevent user from type a width bigger than actual image width
+  newImageWidthInput.addEventListener('keydown', () => {
+    if (parseInt(imageWidthInput.value) < parseInt(newImageWidthInput.value)) {
+      newImageWidthInput.value = imageWidthInput.value;
+    }
+    if (!newImageWidthInput.value.length) {
+      newImageWidthInput.value = '0';
+    }
+  });
+  // listen to keydown for the width to prevent user from type a height bigger than actual image height
+  newImageHeightInput.addEventListener('keydown', () => {
+    if (
+      parseInt(imageHeightInput.value) < parseInt(newImageHeightInput.value)
+    ) {
+      newImageHeightInput.value = imageHeightInput.value;
+    }
+    if (!newImageHeightInput.value.length) {
+      newImageHeightInput.value = '0';
+    }
+  });
+  // listen to click on resize button
+  resizeButton.addEventListener('click', () => {
+    const query = new URLSearchParams({
+      filename: selectInput.selectedOptions.item(0).innerText,
+      width: newImageWidthInput.value,
+      height: newImageHeightInput.value,
+    });
+    const url = RESIZE_API_URL + '?' + query;
+    fetch(url)
+      .then(fetchErrorHandler)
+      .then(async () => {
+        selectedImage.src = url;
+        loadThumbnailImages();
       });
   });
 })();

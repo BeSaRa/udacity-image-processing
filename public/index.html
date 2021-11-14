@@ -16,56 +16,134 @@
   </head>
   <body class="d-flex vh-100 vw-100 bg-light">
     <div class="container">
-      <div class="card my-5 py-5">
-        <div class="row align-items-center justify-content-center">
-          <div class="col-8">
-            <h3 class="text-center mb-5">Upload images to Full Folder</h3>
-          </div>
-        </div>
-        <div class="row align-items-center justify-content-center">
-          <div class="col-8">
-            <input
-              multiple
-              accept="image/jpeg,image/png"
-              class="form-control"
-              type="file"
-              id="uploader" />
-          </div>
-        </div>
-        <div
-          id="uploader-images"
-          class="
-            row
-            py-3
-            align-items-center
-            justify-content-center
-            flex-wrap
-            gap-3
-          "></div>
-        <div class="row">
-          <div class="col-12 d-flex align-items-center justify-content-center">
-            <button id="upload-button" class="btn btn-primary">upload</button>
-          </div>
-        </div>
-      </div>
-      <div class="row">
+      <div class="row d-flex">
         <div class="col-6">
-          <div class="card py-3">
-            <h3 class="text-center">Thumbnails Folder</h3>
-            <div
-              class="
-                row
-                py-3
-                align-items-center
-                justify-content-center
-                flex-wrap
-                gap-3
-              "
-              id="thumbnails-folder-images"></div>
+          <div class="row">
+            <div class="col-12">
+              <div class="card my-5 py-5">
+                <div class="row align-items-center justify-content-center">
+                  <div class="col-8">
+                    <h3 class="text-center mb-5">
+                      Upload images to Full Folder
+                    </h3>
+                  </div>
+                </div>
+                <div class="row align-items-center justify-content-center">
+                  <div class="col-8">
+                    <input
+                      multiple
+                      accept="image/jpeg,image/png"
+                      class="form-control"
+                      type="file"
+                      id="uploader" />
+                  </div>
+                </div>
+                <div
+                  id="uploader-images"
+                  class="
+                    row
+                    py-3
+                    align-items-center
+                    justify-content-center
+                    flex-wrap
+                    gap-3
+                  "></div>
+                <div class="row">
+                  <div
+                    class="
+                      col-12
+                      d-flex
+                      align-items-center
+                      justify-content-center
+                    ">
+                    <button id="upload-button" class="btn btn-primary">
+                      upload
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <div class="card my-5 py-5">
+                <h3 class="text-center">Thumbnails Folder</h3>
+                <span class="text-center d-block text-info"
+                  >only the new size of the same image will be generated</span
+                >
+                <div
+                  class="
+                    row
+                    py-3
+                    px-3
+                    align-items-center
+                    justify-content-center
+                    flex-wrap
+                    gap-3
+                  "
+                  id="thumbnails-folder-images"></div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="col-6">
-          <div class="card">selectedImage</div>
+        <div class="col-6 d-flex">
+          <div class="row flex-grow-1">
+            <div class="card my-5 py-5">
+              <h3>Image Processing</h3>
+              <br />
+              <div class="col-12 mb-3">
+                <label class="form-label" for="s-image">Select Image</label>
+                <select class="form-control" id="s-image"></select>
+              </div>
+              <div class="col-12">
+                <img class="img-fluid" id="selected-image" src="" alt="" />
+              </div>
+              <hr />
+              <div class="row"></div>
+              <div class="row">
+                <div class="col-6">
+                  <h3>Current Size</h3>
+                  <div class="col-12">
+                    <label class="form-label" for="image-width"> Width</label>
+                    <input
+                      disabled
+                      id="image-width"
+                      class="form-control mb-3" />
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label" for="image-height">height</label>
+                    <input
+                      disabled
+                      id="image-height"
+                      class="form-control mb-3" />
+                  </div>
+                </div>
+                <div class="col-6">
+                  <h3>New Size</h3>
+                  <div class="col-12">
+                    <label class="form-label" for="new-image-width">
+                      Width</label
+                    >
+                    <input id="new-image-width" class="form-control mb-3" />
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label" for="new-image-height"
+                      >height</label
+                    >
+                    <input id="new-image-height" class="form-control mb-3" />
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12 d-grid">
+                  <button id="resize-button" class="btn btn-primary d-block">
+                    Resize
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

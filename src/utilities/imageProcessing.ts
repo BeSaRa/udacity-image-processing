@@ -37,7 +37,8 @@ export class ImageProcessing {
    * @param imageName image name without extension
    */
   static imageFullPath(imageName: string): string {
-    return path.resolve(...ImageProcessing.FULL_PATH, imageName) + '.png';
+    console.log(path.resolve(...ImageProcessing.FULL_PATH, imageName));
+    return path.resolve(...ImageProcessing.FULL_PATH, imageName);
   }
 
   /**
@@ -47,11 +48,9 @@ export class ImageProcessing {
    * @param height of the image
    */
   static imageThumbPath(imageName: string, width: number, height: number) {
-    return (
-      path.resolve(
-        ...ImageProcessing.THUMBNAIL_PATH,
-        [imageName, width, height].join('_')
-      ) + '.png'
+    return path.resolve(
+      ...ImageProcessing.THUMBNAIL_PATH,
+      [width, height, imageName].join('_')
     );
   }
 
@@ -104,6 +103,14 @@ export class ImageProcessing {
   ): Promise<string> {
     width = isNaN(width) ? 200 : width;
     height = isNaN(height) ? 200 : height;
+    if (
+      width === 0 &&
+      height === 0 &&
+      (await ImageProcessing.existsInFull(imageName))
+    ) {
+      return ImageProcessing.imageFullPath(imageName);
+    }
+
     if (await ImageProcessing.existsInThumb(imageName, width, height)) {
       return ImageProcessing.imageThumbPath(imageName, width, height);
     } else if (await ImageProcessing.existsInFull(imageName)) {
