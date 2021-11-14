@@ -1,0 +1,14 @@
+.uploader-image {
+    width: 100px;
+    height: 100px;
+    background-color: #EEE;
+    padding: 5px;
+    border-radius: 5px;
+    border: solid #CCC 1px;
+    position: relative;
+}
+
+.uploader-image > img {
+    width: 100%;
+    height: 100%;
+}
