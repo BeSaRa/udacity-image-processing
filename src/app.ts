@@ -20,3 +20,5 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.listen(port, () => {
   console.log('Server Running on port:', port);
 });
+
+export default app;

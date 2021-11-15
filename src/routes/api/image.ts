@@ -13,14 +13,14 @@ imageRoute.get('/', async (req: Request, res: Response): Promise<void> => {
     parseInt(width ? width : '0'),
     parseInt(height ? height : '0')
   );
-  image.length ? res.sendFile(image) : res.send('Image not exists');
+  image.length ? res.sendFile(image) : res.status(400).send('Image not exists');
 });
 
 imageRoute.get('/full', async (req: Request, res: Response) => {
   try {
     res.send(await fs.readdir(path.resolve(...ImageProcessing.FULL_PATH)));
   } catch (e) {
-    res.status(500).send('cannot scan the thumbnail folder');
+    res.status(500).send('cannot scan the full folder');
   }
 });
 

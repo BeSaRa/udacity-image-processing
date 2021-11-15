@@ -18,6 +18,7 @@
     "@types/express-fileupload": "^1.1.7",
     "@types/jasmine": "^3.10.2",
     "@types/sharp": "^0.29.3",
+    "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.3.1",
     "eslint": "^8.2.0",
     "eslint-config-prettier": "^8.3.0",
@@ -32,6 +33,7 @@
     "express-fileupload": "^1.2.1",
     "jasmine": "^3.10.0",
     "jasmine-spec-reporter": "^7.0.0",
-    "sharp": "^0.29.2"
+    "sharp": "^0.29.2",
+    "supertest": "^6.1.6"
   }
 }

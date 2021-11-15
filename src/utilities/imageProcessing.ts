@@ -37,7 +37,6 @@ export class ImageProcessing {
    * @param imageName image name without extension
    */
   static imageFullPath(imageName: string): string {
-    console.log(path.resolve(...ImageProcessing.FULL_PATH, imageName));
     return path.resolve(...ImageProcessing.FULL_PATH, imageName);
   }
 
