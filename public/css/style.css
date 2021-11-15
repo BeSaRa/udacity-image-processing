@@ -8,7 +8,7 @@
     position: relative;
 }
 
-.uploader-image > img {
+.uploader-image img {
     width: 100%;
     height: 100%;
 }

@@ -131,6 +131,45 @@
     return image;
   };
   /**
+   * convert physical url to thumb api url
+   * @param url
+   * @returns {string}
+   */
+  const convertToThumbUrl = (url) => {
+    const [width, height, filename] = url
+      .split('/')
+      .pop()
+      .split('_')
+      .map((i) => {
+        !i.length && (i = '_');
+        return i;
+      });
+    return (
+      RESIZE_API_URL + '?' + new URLSearchParams({ width, height, filename })
+    );
+  };
+  /**
+   * create link to open the thumbnail image in another window
+   * @param url{string}
+   * @returns {HTMLAnchorElement}
+   */
+  const createOpenLink = (url) => {
+    const link = document.createElement('a');
+    link.href = convertToThumbUrl(url);
+    link.target = '_blank';
+    return link;
+  };
+  /**
+   * create link to open the thumbnail image in another window
+   * @param url{string}
+   * @returns {HTMLAnchorElement}
+   */
+  const createOpenLinkWithImage = (url) => {
+    const link = createOpenLink(url);
+    link.appendChild(createImage(url));
+    return link;
+  };
+  /**
    * @description create uploader image wrapper
    * @param url
    * @param index
@@ -141,7 +180,9 @@
     const mainDiv = document.createElement('div');
     mainDiv.classList.add('uploader-image');
     !ignoreRemoveBtn && mainDiv.appendChild(createRemoveBtn(index));
-    mainDiv.appendChild(createImage(url));
+    ignoreRemoveBtn
+      ? mainDiv.appendChild(createOpenLinkWithImage(url))
+      : mainDiv.appendChild(createImage(url));
     return mainDiv;
   };
   /**
