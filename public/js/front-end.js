@@ -87,7 +87,7 @@
       .then(fetchErrorHandler)
       .then((res) => res.json())
       .then((images) => images.map((image) => 'assets/thumb/' + image))
-      .then((urls) => renderUploaderImages(thumbnailsFolderImages, urls, true));
+      .then((urls) => renderImages(thumbnailsFolderImages, urls, true));
   };
   /**
    * @description check if the file in the allowed extensions
@@ -104,7 +104,7 @@
   const onRemoveButtonClicked = (event) => {
     uploaderThumbnails.splice(parseInt(event.target.dataset.index), 1);
     filesInUploader.splice(parseInt(event.target.dataset.index), 1);
-    renderUploaderImages(uploaderImages, uploaderThumbnails);
+    renderImages(uploaderImages, uploaderThumbnails);
   };
   /**
    * @description create remove button
@@ -145,9 +145,9 @@
     return mainDiv;
   };
   /**
-   * @description render the images that came from uploader field
+   * @description render the images to given container
    */
-  const renderUploaderImages = (container, urls, ignoreRemoveBtn = false) => {
+  const renderImages = (container, urls, ignoreRemoveBtn = false) => {
     container.innerHTML = '';
     urls.forEach((url, index) => {
       container.appendChild(createImageItem(url, index, ignoreRemoveBtn));
@@ -183,7 +183,8 @@
       }
     });
     uploader.value = '';
-    renderUploaderImages(uploaderImages, uploaderThumbnails);
+    renderImages(uploaderImages, uploaderThumbnails);
+    loadFullImages();
   });
   // listen to click on the upload button to call the backend API
   uploadBtn.addEventListener('click', () => {
