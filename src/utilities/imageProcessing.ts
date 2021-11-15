@@ -111,8 +111,10 @@ export class ImageProcessing {
     }
 
     if (await ImageProcessing.existsInThumb(imageName, width, height)) {
+      console.log('Image accessed', imageName);
       return ImageProcessing.imageThumbPath(imageName, width, height);
     } else if (await ImageProcessing.existsInFull(imageName)) {
+      console.log('Image Processed', { filename: imageName, width, height });
       return ImageProcessing.createThumbImage(imageName, width, height);
     } else {
       return '';
