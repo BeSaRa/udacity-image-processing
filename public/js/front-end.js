@@ -201,6 +201,14 @@
       }, new FormData()),
     })
       .then(fetchErrorHandler)
+      .then(() => {
+        loadFullImages();
+        alert(
+          'your images uploaded successfully, please check the images in dropdown list'
+        );
+        uploaderThumbnails = [];
+        renderImages(uploaderImages, uploaderThumbnails);
+      })
       .catch((error) => {
         alert(error);
       });
