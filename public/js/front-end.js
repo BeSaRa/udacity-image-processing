@@ -296,7 +296,6 @@
     fetch(url)
       .then(fetchErrorHandler)
       .then(async () => {
-        selectedImage.src = url;
         loadThumbnailImages();
       });
   });
