@@ -4,16 +4,42 @@ import { IImageInformation } from '../../interfaces/i-image-information';
 import { UploadedFile } from 'express-fileupload';
 import path from 'path';
 import { promises as fs } from 'fs';
+import { Validator } from '../../utilities/validator';
 
 const imageRoute = Router();
 imageRoute.get('/', async (req: Request, res: Response): Promise<void> => {
   const { filename, width, height }: Partial<IImageInformation> = req.query;
-  const image = await ImageProcessing.createThumbIfNotExists(
-    filename,
-    parseInt(width ? width : '0'),
-    parseInt(height ? height : '0')
-  );
-  image.length ? res.sendFile(image) : res.status(400).send('Image not exists');
+  if (
+    !Validator.hasValue(filename) ||
+    !Validator.hasValue(width) ||
+    !Validator.hasValue(height)
+  ) {
+    res
+      .status(400)
+      .send('Please Provide value for all Params filename, width and height');
+  } else if (!Validator.isNumber(width) || !Validator.isNumber(height)) {
+    res
+      .status(400)
+      .send('Please make sure that width and height numeric values');
+    return;
+  } else if (
+    !Validator.isPositiveNumber(width) ||
+    !Validator.isPositiveNumber(height)
+  ) {
+    res
+      .status(400)
+      .send('Please make sure that width and height Positive values');
+    return;
+  } else {
+    const image = await ImageProcessing.createThumbIfNotExists(
+      filename,
+      parseInt(width ? width : '0'),
+      parseInt(height ? height : '0')
+    );
+    image.length
+      ? res.sendFile(image)
+      : res.status(400).send('Image not exists');
+  }
 });
 
 imageRoute.get('/full', async (req: Request, res: Response) => {

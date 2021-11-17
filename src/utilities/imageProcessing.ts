@@ -109,7 +109,6 @@ export class ImageProcessing {
     ) {
       return ImageProcessing.imageFullPath(imageName);
     }
-
     if (await ImageProcessing.existsInThumb(imageName, width, height)) {
       console.log('Image accessed', imageName);
       return ImageProcessing.imageThumbPath(imageName, width, height);
