@@ -56,4 +56,40 @@ describe('Test endpoint response', () => {
         done();
       });
   });
+
+  it('/api/images should return 400 if there is missing params', (done) => {
+    request
+      .get('/api/images')
+      .expect(
+        400,
+        'Please Provide value for all Params filename, width and height',
+        done
+      );
+  });
+
+  it('/api/images should return 400 if you provide non-numeric values for width or height', (done) => {
+    request
+      .get('/api/images?filename=image.png&width=dd&height=dd')
+      .expect(
+        400,
+        'Please make sure that width and height numeric values',
+        done
+      );
+  });
+
+  it('/api/images should return 400 if there negative values in width or height', (done) => {
+    request
+      .get('/api/images?filename=image.png&width=-50&height=100')
+      .expect(
+        400,
+        'Please make sure that width and height Positive values',
+        done
+      );
+  });
+
+  it('/api/images should return 400 if you provide filename not exists', (done) => {
+    request
+      .get('/api/images?filename=image500.png&width=100&height=100')
+      .expect(400, 'Image not exists', done);
+  });
 });
