@@ -42,10 +42,12 @@ imageRoute.post('/upload', (req: Request, res: Response) => {
 });
 
 imageRoute.get('/thumbnails', async (req: Request, res: Response) => {
+  const directoryName = path.resolve(...ImageProcessing.THUMBNAIL_PATH);
   try {
-    res.send(await fs.readdir(path.resolve(...ImageProcessing.THUMBNAIL_PATH)));
+    res.send(await fs.readdir(directoryName));
   } catch (e) {
-    res.status(500).send('cannot scan the thumbnail folder');
+    await fs.mkdir(directoryName); //create the directory if not exists
+    res.send([]); // return empty array cause the directory is empty
   }
 });
 export default imageRoute;
