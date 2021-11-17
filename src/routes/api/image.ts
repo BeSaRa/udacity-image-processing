@@ -30,7 +30,8 @@ imageRoute.get('/', async (req: Request, res: Response): Promise<void> => {
       .status(400)
       .send('Please make sure that width and height Positive values');
     return;
-  } else {
+  }
+  try {
     const image = await ImageProcessing.createThumbIfNotExists(
       filename,
       parseInt(width ? width : '0'),
@@ -39,6 +40,9 @@ imageRoute.get('/', async (req: Request, res: Response): Promise<void> => {
     image.length
       ? res.sendFile(image)
       : res.status(400).send('Image not exists');
+  } catch (e) {
+    console.log(e);
+    res.status(500).send('error happened while processing your request');
   }
 });
 
